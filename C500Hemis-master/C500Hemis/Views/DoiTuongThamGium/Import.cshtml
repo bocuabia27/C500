@@ -1,0 +1,115 @@
+﻿@model IEnumerable<C500Hemis.Models.TbDoiTuongThamGium>
+
+@{
+    ViewData["Title"] = "Đối tượng tham gia";
+}
+
+@section Heads {
+    <link href="https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.1.7/r-3.0.3/datatables.min.css" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        footer {
+            visibility: hidden;
+        }
+    </style>
+}
+
+<div class="khungchua">
+    <h1 style="text-align:center">Đối tượng tham gia (@Model.Count())</h1>
+
+    <!-- Hiển thị thông báo thành công hoặc lỗi -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Success"]
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["Error"]
+        </div>
+    }
+
+    <!-- Form để nhập file Excel -->
+    <form method="post" enctype="multipart/form-data" asp-action="Import" class="mb-4">
+        <div class="form-group">
+            <label for="file">Chọn file Excel:</label>
+            <input type="file" id="file" name="file" class="form-control" accept=".xlsx, .xls" />
+        </div>
+        <button type="submit" class="btn btn-primary">Import Excel</button>
+    </form>
+
+    <!-- Bảng hiển thị dữ liệu -->
+    <table class="table" id="views">
+        <thead>
+            <tr nowrap>
+                <th>
+                    Mã loại tham gia
+                </th>
+                <th>
+                    Loại tham gia
+                </th>
+                <th>
+                    Id Người
+                </th>
+                <th nowrap>
+                    Phân loại
+                </th>
+                <th>
+                    Vai trò
+                </th>
+                <th style="text-align: center" class="nosort">Chức năng</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MaLoaiThamGia)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IdLoaiThamGia)
+                    </td>
+                    <td>
+                        <strong>@Html.DisplayFor(modelItem => item.IdNguoi)</strong>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IdPhanLoai)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IdVaiTro)
+                    </td>
+                    <td nowrap style="text-align: right">
+                        <a asp-action="Edit" asp-route-id="@item.IdDoiTuongThamGia" class="btn btn-edit"><i class='bx bx-edit-alt'></i> Chỉnh sửa</a>
+                        <a asp-action="Details" asp-route-id="@item.IdDoiTuongThamGia" class="btn btn-details"><i class='bx bx-info-circle'></i> Chi tiết</a>
+                        <a asp-action="Delete" asp-route-id="@item.IdDoiTuongThamGia" class="btn btn-delete"><i class='bx bx-trash-alt'></i> Xóa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-2.1.8/b-3.1.2/b-colvis-3.1.2/b-html5-3.1.2/b-print-3.1.2/r-3.0.3/datatables.min.js"></script>
+    <script>
+        // Datatable trong datatable.net. Tìm hiểu thêm thông tin: https://datatables.net/manual/
+        var table = new DataTable("#views", {
+            columnDefs: [
+                {
+                    orderable: false,
+                    targets: 5
+                },
+            ],
+            language: {
+                search: "",
+                searchPlaceholder: "Tìm kiếm",
+                info: "Tổng cộng _TOTAL_ bản ghi",
+            }
+        });
+    </script>
+}
